@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
+/* Design tokens and truly app-wide rules only.
+   Page-specific styles live in CSS Modules beside the page:
+     src/app/home.module.css
+     src/app/dashboard/dashboard.module.css
+     src/app/_components/Sky.module.css
+   Custom properties are global by design, so modules can read every token below. */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #171b1f;
+  --foreground: #ffffff;
+  --muted: #8d919a;
+
+  --skeleton: #262b35;
+  --skeleton-highlight: #363d4b;
+
+  --gradient-start: #c79bf2;
+  --gradient-mid: #f27aa5;
+  --gradient-end: #f28b60;
+  --gradient: linear-gradient(
+    90deg,
+    var(--gradient-start),
+    var(--gradient-mid) 55%,
+    var(--gradient-end)
+  );
+
+  --link: #79b8ff;
+
+  --warn-background: #211712;
+  --warn-border: #7c3f12;
+  --warn-text: #fdba74;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-skeleton: var(--skeleton);
+  --color-skeleton-highlight: var(--skeleton-highlight);
+  --color-gradient-start: var(--gradient-start);
+  --color-gradient-mid: var(--gradient-mid);
+  --color-gradient-end: var(--gradient-end);
+  --color-link: var(--link);
+  --color-warn-background: var(--warn-background);
+  --color-warn-border: var(--warn-border);
+  --color-warn-text: var(--warn-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* Shared primitive: used by the dashboard's Panel and the home page's form.
+   1px gradient border — the border-box gradient shows through the
+   transparent border, while the padding-box layer fills the inside. */
+.panel {
+  padding: 20px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background:
+    linear-gradient(var(--background), var(--background)) padding-box,
+    var(--gradient) border-box;
+
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  min-height: 120px;
+}
+
+/* gradient text, e.g. "Retry >" */
+.text-gradient {
+  background: var(--gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }

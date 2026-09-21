@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { env } from "process";
 import { setTimeout as sleep } from "timers/promises";
+import { parseRepo } from "@/lib/parseRepo";
 
 async function fetchGitHub(url: string) {
   return fetch(url, {
@@ -54,7 +55,7 @@ async function getCommitActivity(repo: string) {
 
 async function getChurn(repo: string, since: string) {
   const commitsRes = await fetchGitHub(
-    `https://api.github.com/repos/${repo}/commits?until=${since}&per_page=1`,
+    `https://api.github.com/repos/${repo}/commits?until=${encodeURIComponent(since)}&per_page=1`,
   );
 
   if (!commitsRes.ok) {
@@ -99,12 +100,27 @@ async function getChurn(repo: string, since: string) {
 }
 
 export async function GET(request: NextRequest) {
-  const repo = request.nextUrl.searchParams.get("repo");
+  const rawRepo = request.nextUrl.searchParams.get("repo");
+
+  if (!rawRepo) {
+    return Response.json(
+      {
+        error: "Missing required query param: repo (e.g. ?repo=facebook/react)",
+      },
+      { status: 400 },
+    );
+  }
+
+  // This value is interpolated into api.github.com URLs below, and every
+  // request carries GITHUB_TOKEN. Unvalidated, "../user" would resolve to
+  // https://api.github.com/user/... — outside /repos/ and authenticated as
+  // the token owner. Reject anything that isn't exactly owner/name.
+  const repo = parseRepo(rawRepo);
 
   if (!repo) {
     return Response.json(
       {
-        error: "Missing required query param: repo (e.g. ?repo=facebook/react)",
+        error: `Invalid repo: "${rawRepo}". Expected owner/name (e.g. facebook/react) or a GitHub URL.`,
       },
       { status: 400 },
     );

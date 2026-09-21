@@ -1,0 +1,139 @@
+.sky {
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* one transparent dot; each box-shadow entry paints a copy of it at an offset */
+.dust {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow:
+    6vw 12vh 0 rgba(255, 255, 255, 0.35),
+    14vw 62vh 0 rgba(255, 255, 255, 0.25),
+    22vw 30vh 0 rgba(255, 255, 255, 0.45),
+    31vw 84vh 0 rgba(255, 255, 255, 0.25),
+    38vw 8vh 0 rgba(255, 255, 255, 0.3),
+    47vw 48vh 0 rgba(255, 255, 255, 0.2),
+    55vw 92vh 0 rgba(255, 255, 255, 0.3),
+    63vw 20vh 0 rgba(255, 255, 255, 0.4),
+    71vw 70vh 0 rgba(255, 255, 255, 0.25),
+    78vw 38vh 0 rgba(255, 255, 255, 0.2),
+    86vw 10vh 0 rgba(255, 255, 255, 0.35),
+    92vw 58vh 0 rgba(255, 255, 255, 0.3),
+    96vw 88vh 0 rgba(255, 255, 255, 0.25),
+    10vw 40vh 0 rgba(255, 255, 255, 0.2),
+    26vw 96vh 0 rgba(255, 255, 255, 0.3),
+    59vw 4vh 0 rgba(255, 255, 255, 0.25),
+    82vw 80vh 0 rgba(255, 255, 255, 0.2),
+    43vw 72vh 0 rgba(255, 255, 255, 0.3),
+    3vw 26vh 0 rgba(255, 255, 255, 0.25),
+    9vw 78vh 0 rgba(255, 255, 255, 0.3),
+    17vw 16vh 0 rgba(255, 255, 255, 0.2),
+    20vw 54vh 0 rgba(255, 255, 255, 0.35),
+    28vw 6vh 0 rgba(255, 255, 255, 0.25),
+    34vw 44vh 0 rgba(255, 255, 255, 0.2),
+    40vw 90vh 0 rgba(255, 255, 255, 0.3),
+    45vw 22vh 0 rgba(255, 255, 255, 0.25),
+    51vw 60vh 0 rgba(255, 255, 255, 0.35),
+    57vw 34vh 0 rgba(255, 255, 255, 0.2),
+    66vw 52vh 0 rgba(255, 255, 255, 0.3),
+    68vw 94vh 0 rgba(255, 255, 255, 0.25),
+    74vw 14vh 0 rgba(255, 255, 255, 0.35),
+    80vw 56vh 0 rgba(255, 255, 255, 0.2),
+    84vw 24vh 0 rgba(255, 255, 255, 0.3),
+    89vw 68vh 0 rgba(255, 255, 255, 0.25),
+    94vw 32vh 0 rgba(255, 255, 255, 0.35),
+    98vw 6vh 0 rgba(255, 255, 255, 0.2),
+    1vw 92vh 0 rgba(255, 255, 255, 0.25),
+    35vw 66vh 0 rgba(255, 255, 255, 0.2),
+    61vw 82vh 0 rgba(255, 255, 255, 0.3),
+    75vw 88vh 0 rgba(255, 255, 255, 0.2),
+    13vw 90vh 0 rgba(255, 255, 255, 0.25),
+    48vw 12vh 0 rgba(255, 255, 255, 0.3);
+}
+
+/* a few larger, tinted stars that slowly twinkle */
+.dustLg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: transparent;
+  animation: twinkle 4.5s ease-in-out infinite;
+  box-shadow:
+    12vw 22vh 0 color-mix(in srgb, var(--gradient-start) 80%, transparent),
+    27vw 70vh 0 rgba(255, 255, 255, 0.75),
+    36vw 18vh 0 color-mix(in srgb, var(--gradient-mid) 70%, transparent),
+    52vw 82vh 0 rgba(255, 255, 255, 0.7),
+    64vw 40vh 0 color-mix(in srgb, var(--gradient-start) 75%, transparent),
+    77vw 66vh 0 color-mix(in srgb, var(--gradient-end) 70%, transparent),
+    91vw 46vh 0 rgba(255, 255, 255, 0.75),
+    5vw 58vh 0 color-mix(in srgb, var(--gradient-end) 65%, transparent);
+}
+
+.star {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--gradient-start) 55%, transparent) 35%,
+    var(--gradient-mid) 75%,
+    #ffffff
+  );
+  filter: drop-shadow(
+    0 0 4px color-mix(in srgb, var(--gradient-mid) 70%, transparent)
+  );
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--len, 150px);
+  height: 2px;
+  border-radius: 2px;
+  opacity: 0;
+  /* rotate first, then translate along that rotated axis */
+  transform: rotate(32deg) translateX(-160px);
+  animation: shoot var(--dur) linear var(--delay) infinite;
+}
+
+/* visible for roughly the first fifth of each cycle, then a long quiet gap */
+@keyframes shoot {
+  0% {
+    opacity: 0;
+    transform: rotate(32deg) translateX(-160px);
+  }
+  3% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 0;
+    transform: rotate(32deg) translateX(780px);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(32deg) translateX(780px);
+  }
+}
+
+@keyframes twinkle {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star {
+    display: none;
+  }
+  .dustLg {
+    animation: none;
+  }
+}

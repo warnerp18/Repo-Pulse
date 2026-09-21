@@ -1,0 +1,245 @@
+.wrap {
+  display: grid;
+  gap: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ---- page header ---- */
+
+.wrap header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wrap h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.title {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.queryStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.loadingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gradient);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ---- section grids ---- */
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.evenGrid {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.grid2 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 820px) {
+  .wideLeft {
+    grid-template-columns: 2fr 1fr;
+  }
+  .wideRight {
+    grid-template-columns: 1fr 2fr;
+  }
+}
+
+/* ---- skeletons ---- */
+
+/* placeholder shape with a shimmer sweeping across it */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--skeleton);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    var(--skeleton-highlight) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* height matches .stat's rendered line box (38px x 1.05) so the panel
+   does not resize when the number arrives */
+.skeletonNum {
+  width: 96px;
+  height: 40px;
+}
+
+.skeletonUser {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.skeletonUsername {
+  flex: 1;
+  height: 12px;
+}
+
+.skeletonFullLength {
+  width: 100%;
+  height: 12px;
+}
+
+/* vertical list of skeleton rows */
+.skeletonStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* one row: avatar circle then a name line */
+.skeletonUserRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skeletonBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 160px;
+}
+
+.skeletonBar {
+  flex: 1;
+  height: 60%;
+  border-radius: 2px 2px 0 0;
+}
+
+/* vary the heights so it reads as a chart, without random values */
+.skeletonBar:nth-child(4n + 1) {
+  height: 45%;
+}
+.skeletonBar:nth-child(4n + 2) {
+  height: 70%;
+}
+.skeletonBar:nth-child(4n + 3) {
+  height: 55%;
+}
+.skeletonBar:nth-child(4n + 4) {
+  height: 85%;
+}
+
+/* churn table row: filename fills the row, two fixed-width stat columns */
+.skeletonTableRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.skeletonFilename {
+  flex: 1;
+  height: 12px;
+}
+
+.skeletonStat {
+  flex: none;
+  width: 56px;
+  height: 12px;
+}
+
+/* Every stat in the tile row occupies the same 40px block (38px x 1.05,
+   .stat's natural line box) so the sub-label beneath sits on one line
+   across all four panels, whatever size the value itself is. Bottom
+   alignment keeps the smaller word stats on the numbers' baseline. */
+.stat {
+  margin: 0;
+  min-height: 40px;
+  display: flex;
+  align-items: flex-end;
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+/* Word-valued stats (a language name, a branch) rather than numerals.
+   A single long word cannot wrap, so 38px overflows the tile; `anywhere`
+   is the backstop for the long ones like "Objective-C++". */
+.statText {
+  composes: stat;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+/* 28px bar plus 6px either side = the same 40px block .stat occupies */
+.skeletonStatText {
+  width: 150px;
+  height: 28px;
+  margin-block: 6px;
+}
+
+/* 12px bar plus 3px either side = the 18px line box .sub occupies (12px x 1.5) */
+.skeletonSub {
+  width: 140px;
+  height: 12px;
+  margin-block: 3px;
+}
+
+.sub {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    animation: none;
+  }
+  .loadingDot {
+    animation: none;
+  }
+}

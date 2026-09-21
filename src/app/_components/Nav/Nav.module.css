@@ -1,0 +1,45 @@
+/* ---- nav ---- */
+
+/* the bar: brand on the left, nav on the right.
+   One scoped class does the binding; bare selectors below ride along as
+   descendants of it. A module drops any selector with no local class. */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+/* the list carries the layout; <nav> is a landmark wrapper only */
+.links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.link {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--foreground);
+}

@@ -9,7 +9,7 @@ interface Contributor {
   contributions: number;
 }
 
-interface CommitActivityWeek {
+export interface CommitActivityWeek {
   total: number;
   week: number;
   days: number[];
@@ -43,21 +43,20 @@ interface RepoInsightsData {
   };
 }
 
-const useFetchDashboard = () => {
+const useFetchDashboard = (repoParam: string) => {
   const [data, setData] = useState<RepoInsightsData | null>(null);
   const [error, setError] = useState<{ message: string } | null>(null);
-  const [fetching, setFetching] = useState(false);
+  const [fetching, setFetching] = useState(true);
   useEffect(() => {
     const getData = async () => {
       setFetching(true);
       try {
-        const res = await fetch("api/repo-insights?repo=facebook/react");
+        const res = await fetch(`/api/repo-insights?repo=${repoParam}`);
 
         const body = await res.json();
         if (!res.ok) {
           setError({ message: body.error });
         } else {
-          console.log(body.data);
           setData(body.data);
         }
       } catch (err) {
@@ -67,8 +66,10 @@ const useFetchDashboard = () => {
       }
     };
 
-    getData();
-  }, []);
+    if (repoParam) {
+      getData();
+    }
+  }, [repoParam]);
 
   return {
     data,

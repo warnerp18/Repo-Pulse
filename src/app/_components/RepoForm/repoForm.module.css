@@ -1,0 +1,201 @@
+.form {
+  max-width: 720px;
+  margin-top: 40px;
+}
+
+.form label {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.req {
+  color: var(--gradient-mid);
+  margin-left: 4px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  @media (min-width: 740px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+}
+
+/* the underline lives on the wrapper: input is a void element and
+   cannot carry a pseudo-element of its own */
+.field {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  border-bottom: 1px solid var(--muted);
+}
+
+.field::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 160ms ease;
+}
+
+.field:focus-within::after {
+  transform: scaleX(1);
+}
+
+.field input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  padding: 10px 2px;
+}
+
+.field input::placeholder {
+  color: var(--muted);
+}
+
+.hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.result {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  min-height: 20px;
+}
+
+.result.bad {
+  color: var(--warn-text);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.tries {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.tries span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--skeleton);
+  border-radius: 999px;
+  padding: 5px 14px;
+  cursor: pointer;
+}
+
+.chip:hover {
+  color: var(--foreground);
+  border-color: var(--muted);
+}
+
+/* ---- analyze button ---- */
+
+/* same two-layer trick as .panel, but the border gradient is twice as wide
+   as the button and slides one full tile per cycle, so the colors drift */
+.analyze {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--foreground);
+  cursor: pointer;
+  background:
+    linear-gradient(var(--background), var(--background)) padding-box,
+    linear-gradient(
+        90deg,
+        var(--gradient-start),
+        var(--gradient-mid),
+        var(--gradient-end),
+        var(--gradient-mid),
+        var(--gradient-start)
+      )
+      border-box;
+  background-size:
+    auto,
+    200% 100%;
+  background-position:
+    0 0,
+    0 0;
+  animation: border-drift 6s linear infinite;
+}
+
+.analyze:hover {
+  animation-duration: 2s;
+}
+
+.analyze:focus-visible {
+  outline: 2px solid var(--gradient-mid);
+  outline-offset: 3px;
+}
+
+.analyze .shaft {
+  transform: scaleX(0);
+  transform-box: fill-box;
+  transform-origin: right center;
+  transition: transform 180ms ease;
+}
+
+.analyze:hover .shaft,
+.analyze:focus-visible .shaft {
+  transform: scaleX(1);
+}
+
+.analyze .arrow {
+  transition: transform 180ms ease;
+}
+
+.analyze:hover .arrow {
+  transform: translateX(2px);
+}
+
+@keyframes border-drift {
+  to {
+    background-position:
+      0 0,
+      200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analyze {
+    animation: none;
+  }
+  .analyze .shaft,
+  .analyze .arrow {
+    transition: none;
+  }
+  .field::after {
+    transition: none;
+  }
+}

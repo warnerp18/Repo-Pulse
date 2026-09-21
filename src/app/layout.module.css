@@ -1,0 +1,17 @@
+/* The page shell: one content column shared by every route.
+   position/z-index lift it above the fixed star layer, which is
+   positioned and would otherwise paint over unpositioned content.
+   Grid + gap spaces the nav from the page below it — the page's own
+   .wrap handles spacing between its sections. */
+.shell {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  display: grid;
+  gap: 48px;
+  align-content: start;
+  padding-inline: 16px;
+  padding-block: 24px 56px;
+}
