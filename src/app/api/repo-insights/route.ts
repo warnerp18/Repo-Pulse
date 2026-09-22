@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { env } from "process";
 import { setTimeout as sleep } from "timers/promises";
 import { parseRepo } from "@/lib/parseRepo";
+import { isLockfile } from "@/lib/isLockfile";
 
 async function fetchGitHub(url: string) {
   return fetch(url, {
@@ -80,9 +81,20 @@ async function getChurn(repo: string, since: string) {
     total_commits: number;
     files: GitHubComparisonFile[];
   };
+
+  // Lockfiles are dropped before the sort, not after, so they cannot take
+  // slots in the twenty we keep. totalFiles still counts them: the tile
+  // above the panel reports how many files changed, which they did — it is
+  // only the "where is the work happening" ranking they distort.
+  const twentyFiles = compare.files
+    .filter((file) => !isLockfile(file.filename))
+    .toSorted((a, b) => b.changes - a.changes)
+    .slice(0, 20);
+
   const filteredCompare = {
+    totalFiles: compare.files.length,
     totalCommits: compare.total_commits,
-    files: compare.files.map((file) => {
+    files: twentyFiles.map((file) => {
       return {
         fileName: file.filename,
         status: file.status,

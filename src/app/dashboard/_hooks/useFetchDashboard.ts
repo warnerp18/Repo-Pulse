@@ -15,13 +15,14 @@ export interface CommitActivityWeek {
   days: number[];
 }
 
-interface ChangedFile {
-  filename: string;
+/** Shaped by getChurn in the route — camelCase, not GitHub's raw keys. */
+export interface ChangedFile {
+  fileName: string;
   status: string;
   additions: number;
   deletions: number;
   changes: number;
-  blob_url: string;
+  blobUrl: string;
 }
 
 /** Shaped by getRepoMeta in the route — camelCase, not GitHub's raw keys. */
@@ -53,7 +54,11 @@ interface RepoInsightsData {
     error: number | null;
   };
   churn: {
-    data: { total_commits: number; files: ChangedFile[] } | null;
+    data: {
+      totalCommits: number;
+      totalFiles: number;
+      files: ChangedFile[];
+    } | null;
     error: number | null;
   };
 }

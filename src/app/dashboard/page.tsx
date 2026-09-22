@@ -9,7 +9,9 @@ import { formatTimeAgo, getCommitTotals, getTopLanguage } from "./helpers";
 import CommitGraph from "./_components/commitGraph/CommitGraph";
 import TopContributors from "./_components/topContributors/TopContributors";
 import TopFiveLanguages from "./_components/topFiveLanguages/TopFiveLanguage";
+import ChurnHotspots from "./_components/churnHotspots/ChurnHotspots";
 import Link from "next/link";
+import Sky from "../_components/Sky/Sky";
 
 const DashBoard = () => {
   const searchParams = useSearchParams();
@@ -25,15 +27,17 @@ const DashBoard = () => {
 
   const commitTotals = commitData ? getCommitTotals(commitData) : null;
 
-  const filesChanged = data?.churn.data?.files.length;
-  const displayedAmount =
-    data?.churn.data?.files.length === 300 ? "300+" : filesChanged;
+  // The compare endpoint stops listing files at 300, so a repo that hits
+  // the cap has changed at least that many and we cannot say how many more.
+  const filesChanged = data?.churn.data?.totalFiles;
+  const displayedAmount = filesChanged === 300 ? "300+" : filesChanged;
+  const churnedFiles = data?.churn.data?.files;
 
   const timeAgo = formatTimeAgo(data?.metaData.data?.pushedAt ?? "");
 
-  console.log({ data });
   return (
     <div className={styles.wrap}>
+      <Sky />
       <header>
         <div>
           <h1>
@@ -88,7 +92,7 @@ const DashBoard = () => {
       <section className={styles.panels}>
         <div className={`${styles.grid} ${styles.evenGrid}`}>
           <Panel title="Commits">
-            {data ? (
+            {commitTotals ? (
               <p className={styles.stat}>{commitTotals?.last90}</p>
             ) : (
               <Skeleton type="number" />
@@ -96,7 +100,7 @@ const DashBoard = () => {
             <p className={styles.sub}>last 90 days</p>
           </Panel>
           <Panel title="Contributors">
-            {data ? (
+            {contributors ? (
               <p className={styles.stat}>{contributors?.length}</p>
             ) : (
               <Skeleton type="number" />
@@ -105,7 +109,7 @@ const DashBoard = () => {
           </Panel>
 
           <Panel title="Top Language">
-            {data ? (
+            {topName && topBytes && totalBytes ? (
               <>
                 <p className={styles.statText}>{topName}</p>
                 <p className={styles.sub}>
@@ -123,7 +127,7 @@ const DashBoard = () => {
           </Panel>
 
           <Panel title="Files changed">
-            {data ? (
+            {displayedAmount ? (
               <p className={styles.stat}>{displayedAmount}</p>
             ) : (
               <>
@@ -142,7 +146,7 @@ const DashBoard = () => {
                 ? `${commitTotals.lastYear} commits • 52 weeks`
                 : undefined
             }>
-            {data ? (
+            {commitTotals ? (
               <>
                 <CommitGraph
                   weeks={commitTotals?.weeks ?? []}
@@ -188,11 +192,15 @@ const DashBoard = () => {
             )}
           </Panel>
           <Panel title="Churn hotspots">
-            <div className={styles.skeletonStack}>
-              {Array.from({ length: 5 }, (_, i) => (
-                <Skeleton key={i} type="tableRow" />
-              ))}
-            </div>
+            {churnedFiles?.length ? (
+              <ChurnHotspots files={churnedFiles} />
+            ) : (
+              <div className={styles.skeletonStack}>
+                {Array.from({ length: 5 }, (_, i) => (
+                  <Skeleton key={i} type="tableRow" />
+                ))}
+              </div>
+            )}
           </Panel>
         </div>
       </section>

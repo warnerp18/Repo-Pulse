@@ -1,0 +1,102 @@
+/* The panel is the wide half of a two-up grid, so the table has to fit
+   whatever width is left over. table-layout: fixed is what makes that
+   happen: it hands the number and bar columns the widths declared on the
+   <colgroup> and gives the remainder to the path. Under the default auto
+   layout the browser sizes every column to its content, so one long path
+   widens the table past the panel instead of truncating inside it — and
+   none of the ellipsis below ever fires. */
+.churn {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.numberColumn {
+  width: 64px;
+}
+
+.barColumn {
+  width: 96px;
+}
+
+/* Block padding only. Inline spacing is set per cell, and a `.row td`
+   rule here would outrank those single-class selectors and win. */
+.row td {
+  padding-block: 5px;
+  vertical-align: middle;
+}
+
+/* A path truncated from the right loses its filename — the one part that
+   tells two rows in the same directory apart. So the halves are separate
+   flex items: the directory shrinks and ellipses, the basename is
+   flex: none and always survives whole. The min-width: 0 pair is what
+   permits the shrink at all; a flex item will not go below its content
+   width without it. */
+.path a {
+  display: flex;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.path a:hover {
+  color: var(--gradient-mid);
+}
+
+.directory {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.base {
+  flex: none;
+}
+
+/* --add and --del are near-identical under deuteranopia (see the note in
+   globals.css), so these figures are what actually separate the two
+   columns. They stay whatever the bar does. */
+.additions,
+.deletions {
+  padding-left: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.additions {
+  color: var(--add);
+}
+
+.deletions {
+  color: var(--del);
+}
+
+/* 84px of bar in a 96px column — the margin is the gutter the numeric
+   cells get from padding, which a percentage-width child here cannot use. */
+.track {
+  display: flex;
+  gap: 2px;
+  height: 4px;
+  margin-left: 12px;
+}
+
+.addFill,
+.deleteFill {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+}
+
+.addFill {
+  background: var(--add-fill);
+}
+
+.deleteFill {
+  background: var(--del-fill);
+}
