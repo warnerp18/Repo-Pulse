@@ -4,7 +4,7 @@
    Page-specific styles live in CSS Modules beside the page:
      src/app/home.module.css
      src/app/dashboard/dashboard.module.css
-     src/app/_components/Sky.module.css
+     src/app/_components/sky.module.css
    Custom properties are global by design, so modules can read every token below. */
 
 :root {
@@ -217,4 +217,149 @@ body {
 .body-muted {
   font-size: 14px;
   color: var(--muted);
+}
+
+/* ---- control primitives ----
+   Use directly from JSX (className="button") or pull into a CSS Module with
+   `composes: button from global;` and add only what differs — that is how
+   .analyze in repo-form.module.css should layer its animated border on top.
+   Geometry matches .analyze (6px radius, 10px/20px padding) so buttons are
+   the same size and shape wherever they appear. */
+
+/* the default button: a quiet surface for secondary actions — "Try again"
+   on the error screen, panel-level retries. The loud gradient CTA stays
+   local to the form; two competing hero buttons on one screen is the thing
+   this is meant to avoid. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  /* buttons do not inherit typography from body — without this they render
+     in the browser's default face, at the browser's default size */
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid var(--skeleton-highlight);
+  background: var(--skeleton);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+
+  /* containing block and clip for the hover shimmer below */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover shimmer: a soft highlight that sweeps left to right, the same idea
+   as the skeleton shimmer but fired by hover instead of looping.
+   It is parked off the left edge with no transition, so the sweep only
+   animates on the way in — on mouse-out it snaps back rather than sliding
+   backwards, which would read as the highlight retreating.
+   inset: 0 resolves against the padding box, so the sweep passes over the
+   label but never over the 1px border, keeping the primary gradient crisp. */
+.button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.13) 50%,
+    transparent 70%
+  );
+}
+
+.button:hover::after {
+  transform: translateX(100%);
+  transition: transform 700ms ease;
+}
+
+.button:not(.button-primary):hover {
+  background: var(--skeleton-highlight);
+}
+
+/* the same ring .analyze uses. Centralised here so a new button cannot ship
+   without a visible focus state — the failure that is easiest to miss,
+   because it never shows up when you test with a mouse. */
+.button:focus-visible {
+  outline: 2px solid var(--gradient-mid);
+  outline-offset: 3px;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.button:not(.button-primary):disabled:hover {
+  background: var(--skeleton);
+}
+
+/* The primary variant: the drifting gradient border from the landing page's
+   analyze button. Same two-layer trick as .panel — the border-box gradient
+   shows through a transparent border while the padding-box layer fills the
+   inside — but the gradient is twice the button's width and slides one full
+   tile per cycle, so the colours drift.
+
+   One per screen. The whole point of a loud button is that it is the single
+   obvious action; two of them read as two equally important choices.
+
+   The base .button:hover is scoped away from this class above, because
+   .button:hover out-specifies .button-primary and would otherwise flatten
+   the gradient to a plain surface on hover. */
+.button-primary {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--background), var(--background)) padding-box,
+    linear-gradient(
+        90deg,
+        var(--gradient-start),
+        var(--gradient-mid),
+        var(--gradient-end),
+        var(--gradient-mid),
+        var(--gradient-start)
+      )
+      border-box;
+  background-size:
+    auto,
+    200% 100%;
+  background-position:
+    0 0,
+    0 0;
+  animation: border-drift 6s linear infinite;
+}
+
+/* the drift speeds up rather than changing colour, so hover reads as the
+   same object responding rather than a different state */
+.button-primary:hover {
+  animation-duration: 2s;
+}
+
+.button-primary:disabled {
+  animation: none;
+}
+
+@keyframes border-drift {
+  to {
+    background-position:
+      0 0,
+      200% 0;
+  }
+}
+
+/* An infinite animation is exactly what this setting is for. The gradient
+   border stays — only the motion stops — so the button keeps its identity. */
+@media (prefers-reduced-motion: reduce) {
+  .button-primary {
+    animation: none;
+  }
+  .button::after {
+    display: none;
+  }
 }

@@ -116,47 +116,11 @@
 
 /* ---- analyze button ---- */
 
-/* same two-layer trick as .panel, but the border gradient is twice as wide
-   as the button and slides one full tile per cycle, so the colors drift */
+/* Geometry, typography, the drifting gradient border, the focus ring and the
+   hover shimmer all come from the global primitive. What stays here is the one
+   thing unique to this button: the arrow that draws itself on hover. */
 .analyze {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 10px 20px;
-  font: inherit;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--foreground);
-  cursor: pointer;
-  background:
-    linear-gradient(var(--background), var(--background)) padding-box,
-    linear-gradient(
-        90deg,
-        var(--gradient-start),
-        var(--gradient-mid),
-        var(--gradient-end),
-        var(--gradient-mid),
-        var(--gradient-start)
-      )
-      border-box;
-  background-size:
-    auto,
-    200% 100%;
-  background-position:
-    0 0,
-    0 0;
-  animation: border-drift 6s linear infinite;
-}
-
-.analyze:hover {
-  animation-duration: 2s;
-}
-
-.analyze:focus-visible {
-  outline: 2px solid var(--gradient-mid);
-  outline-offset: 3px;
+  composes: button button-primary from global;
 }
 
 .analyze .shaft {
@@ -179,18 +143,7 @@
   transform: translateX(2px);
 }
 
-@keyframes border-drift {
-  to {
-    background-position:
-      0 0,
-      200% 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .analyze {
-    animation: none;
-  }
   .analyze .shaft,
   .analyze .arrow {
     transition: none;
