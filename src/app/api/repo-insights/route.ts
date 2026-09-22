@@ -4,9 +4,22 @@ import { setTimeout as sleep } from "timers/promises";
 import { parseRepo } from "@/lib/parseRepo";
 import { isLockfile } from "@/lib/isLockfile";
 
-async function fetchGitHub(url: string) {
+const TTL = {
+  repoMeta: 60,
+  languages: 3600,
+  contributors: 3600,
+  commitActivity: 3600,
+  commits: 86400,
+  compare: 3600,
+} as const;
+
+async function fetchGitHub(url: string, ttl: number) {
   return fetch(url, {
-    headers: { Authorization: `Bearer ${env.GITHUB_TOKEN}` },
+    headers: {
+      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+    },
+    cache: "force-cache",
+    next: { revalidate: ttl },
   });
 }
 
@@ -22,6 +35,7 @@ interface GitHubComparisonFile {
 async function getLanguages(repo: string) {
   const res = await fetchGitHub(
     `https://api.github.com/repos/${repo}/languages`,
+    TTL.languages,
   );
   return res.ok
     ? { data: await res.json(), error: null }
@@ -31,6 +45,7 @@ async function getLanguages(repo: string) {
 async function getContributors(repo: string) {
   const res = await fetchGitHub(
     `https://api.github.com/repos/${repo}/contributors`,
+    TTL.contributors,
   );
   return res.ok
     ? { data: await res.json(), error: null }
@@ -40,12 +55,14 @@ async function getContributors(repo: string) {
 async function getCommitActivity(repo: string) {
   let res = await fetchGitHub(
     `https://api.github.com/repos/${repo}/stats/commit_activity`,
+    TTL.commitActivity,
   );
 
   if (res.status === 202) {
     await sleep(1000);
     res = await fetchGitHub(
       `https://api.github.com/repos/${repo}/stats/commit_activity`,
+      TTL.commitActivity,
     );
   }
 
@@ -57,6 +74,7 @@ async function getCommitActivity(repo: string) {
 async function getChurn(repo: string, since: string) {
   const commitsRes = await fetchGitHub(
     `https://api.github.com/repos/${repo}/commits?until=${encodeURIComponent(since)}&per_page=1`,
+    TTL.commits,
   );
 
   if (!commitsRes.ok) {
@@ -73,6 +91,7 @@ async function getChurn(repo: string, since: string) {
 
   const compareRes = await fetchGitHub(
     `https://api.github.com/repos/${repo}/compare/${sha}...HEAD`,
+    TTL.compare,
   );
   // TODO: this `as` cast trusts GitHub's response shape with no runtime
   // check. Replace with a Zod schema (here and at the other .json() calls
@@ -111,7 +130,10 @@ async function getChurn(repo: string, since: string) {
 }
 
 async function getRepoMeta(repo: string) {
-  const res = await fetchGitHub(`https://api.github.com/repos/${repo}`);
+  const res = await fetchGitHub(
+    `https://api.github.com/repos/${repo}`,
+    TTL.repoMeta,
+  );
 
   if (!res.ok) {
     return { data: null, error: res.status };
@@ -158,8 +180,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  /* Truncated to UTC midnight, not Date.now() minus 90 days. This value goes
+     into the /commits?until= URL, and the fetch cache keys on the URL — a
+     millisecond-precision timestamp would make every request a unique key and
+     the churn path would never cache. Whole UTC days also match the window
+     convention the rest of the project uses. */
+  const t = new Date();
   const ninetyDaysAgo = new Date(
-    Date.now() - 90 * 24 * 60 * 60 * 1000,
+    Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate() - 90),
   ).toISOString();
 
   let data;
