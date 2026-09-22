@@ -3,6 +3,7 @@ import { env } from "process";
 import { setTimeout as sleep } from "timers/promises";
 import { parseRepo } from "@/lib/parseRepo";
 import { isLockfile } from "@/lib/isLockfile";
+import { parseLastPage } from "@/lib/parseLastPage";
 
 const TTL = {
   repoMeta: 60,
@@ -21,6 +22,16 @@ async function fetchGitHub(url: string, ttl: number) {
     cache: "force-cache",
     next: { revalidate: ttl },
   });
+}
+
+/** Only the fields the dashboard renders; GitHub sends far more. */
+interface Contributor {
+  login: string;
+  id: number;
+  avatar_url: string;
+  html_url: string;
+  type: string;
+  contributions: number;
 }
 
 interface GitHubComparisonFile {
@@ -42,28 +53,49 @@ async function getLanguages(repo: string) {
     : { data: null, error: res.status };
 }
 
+/**
+ * Two calls, in parallel. The first is the list the panel renders; the second
+ * exists only to count, because GitHub reports no total in the body — the list
+ * call returns 30 items whether the repo has 30 or 4,000.
+ *
+ * With `per_page=1` every page holds exactly one contributor, so the
+ * `rel="last"` page number in the Link header *is* the total.
+ */
 async function getContributors(repo: string) {
-  const res = await fetchGitHub(
-    `https://api.github.com/repos/${repo}/contributors`,
-    TTL.contributors,
-  );
-  return res.ok
-    ? { data: await res.json(), error: null }
-    : { data: null, error: res.status };
+  const [listRes, countRes] = await Promise.all([
+    fetchGitHub(
+      `https://api.github.com/repos/${repo}/contributors`,
+      TTL.contributors,
+    ),
+    fetchGitHub(
+      `https://api.github.com/repos/${repo}/contributors?per_page=1`,
+      TTL.contributors,
+    ),
+  ]);
+
+  if (!listRes.ok) {
+    return { data: null, error: listRes.status };
+  }
+
+  const list: Contributor[] = await listRes.json();
+
+  // A failed or single-page count is not worth failing the section over:
+  // fall back to the length of what we actually received.
+  const total =
+    (countRes.ok ? parseLastPage(countRes.headers.get("link")) : null) ??
+    list.length;
+
+  return { data: { list, total }, error: null };
 }
 
 async function getCommitActivity(repo: string) {
-  let res = await fetchGitHub(
-    `https://api.github.com/repos/${repo}/stats/commit_activity`,
-    TTL.commitActivity,
-  );
+  const url = `https://api.github.com/repos/${repo}/stats/commit_activity`;
+  let res = await fetchGitHub(url, TTL.commitActivity);
 
-  if (res.status === 202) {
-    await sleep(1000);
-    res = await fetchGitHub(
-      `https://api.github.com/repos/${repo}/stats/commit_activity`,
-      TTL.commitActivity,
-    );
+  for (const delay of [1000, 2000]) {
+    if (res.status !== 202) break;
+    await sleep(delay);
+    res = await fetchGitHub(url, TTL.commitActivity);
   }
 
   return res.ok

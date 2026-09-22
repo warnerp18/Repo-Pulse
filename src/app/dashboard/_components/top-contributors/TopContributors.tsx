@@ -11,7 +11,7 @@ const TopContributors = ({ contributors }: { contributors: Contributor[] }) => {
 
   return (
     <ul className={styles.contributorUserRow}>
-      {topFiveContributors?.map((c, i) => {
+      {topFiveContributors?.map((c) => {
         return (
           <li key={c.id} className={styles.contributor}>
             <Image

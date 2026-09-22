@@ -7,6 +7,7 @@ import {
   getTopLanguage,
   getMonthLabels,
   formatTimeAgo,
+  panelState,
 } from "./helpers.ts";
 
 const DAY = 86400;
@@ -267,5 +268,40 @@ describe("formatTimeAgo", () => {
 
   test("years", () => {
     assert.equal(formatTimeAgo(ago(800 * DAY_MS)), "2 years ago");
+  });
+});
+
+describe("panelState", () => {
+  test("a section with no error is ok", () => {
+    assert.equal(panelState("languages", null), "ok");
+    assert.equal(panelState("contributors", null), "ok");
+  });
+
+  test("202 on commit activity is pending, not a failure", () => {
+    assert.equal(panelState("commitActivity", 202), "pending");
+  });
+
+  test("202 anywhere else is a failure, not pending", () => {
+    // Nothing else answers 202, so pending there would load forever.
+    assert.equal(panelState("languages", 202), "failed");
+  });
+
+  test("403 on contributors is unavailable, 403 elsewhere is a failure", () => {
+    // 403 elsewhere is the token hitting the rate limit — must stay visible.
+    assert.equal(panelState("contributors", 403), "unavailable");
+    assert.equal(panelState("languages", 403), "failed");
+    assert.equal(panelState("churn", 403), "failed");
+  });
+
+  test("404 on churn is empty, 404 elsewhere is a failure", () => {
+    // The route 404s the whole request if the repo is missing, so a 404
+    // reaching another section is unexpected.
+    assert.equal(panelState("churn", 404), "empty");
+    assert.equal(panelState("contributors", 404), "failed");
+  });
+
+  test("server errors are failures", () => {
+    assert.equal(panelState("languages", 500), "failed");
+    assert.equal(panelState("metaData", 502), "failed");
   });
 });

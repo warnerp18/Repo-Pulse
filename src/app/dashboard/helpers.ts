@@ -1,4 +1,7 @@
-import type { CommitActivityWeek } from "./_hooks/useFetchDashboard";
+import type {
+  CommitActivityWeek,
+  RepoInsightsData,
+} from "./_hooks/useFetchDashboard";
 
 const SECONDS_IN_A_DAY = 86400; // 60 * 60 * 24
 
@@ -24,9 +27,14 @@ const UNITS = [
   { unit: "day", ms: DAY },
   { unit: "hour", ms: HOUR },
   { unit: "minute", ms: MINUTE },
-] as const satisfies readonly { unit: Intl.RelativeTimeFormatUnit; ms: number }[];
+] as const satisfies readonly {
+  unit: Intl.RelativeTimeFormatUnit;
+  ms: number;
+}[];
 
 const rtf = new Intl.RelativeTimeFormat("en", { numeric: "always" });
+
+export type PanelState = "ok" | "empty" | "pending" | "unavailable" | "failed";
 
 /** A week bucket plus the two flags the chart paints from. */
 export type ChartWeek = CommitActivityWeek & {
@@ -176,3 +184,24 @@ export const formatTimeAgo = (isoDate: string) => {
 
   return "just now";
 };
+
+export function panelState(
+  section: keyof RepoInsightsData,
+  error: number | null,
+): PanelState {
+  if (!error) return "ok";
+
+  // GitHub answers 202 while it computes stats. The data is coming, so this
+  // is still-loading, not an error. Only the stats endpoints do this.
+  if (error === 202 && section === "commitActivity") return "pending";
+
+  // GitHub refuses contributor lists for very large histories (torvalds/linux).
+  // Permanent for that repo, so a reload won't help.
+  if (error === 403 && section === "contributors") return "unavailable";
+
+  // No commit before the 90-day boundary: the repo is younger than the window.
+  if (error === 404 && section === "churn") return "empty";
+
+  // Includes 403 on any other section, which means rate-limited.
+  return "failed";
+}

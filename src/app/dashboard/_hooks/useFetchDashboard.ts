@@ -36,7 +36,7 @@ export interface RepoMetaData {
   openIssuesCount: number;
 }
 
-interface RepoInsightsData {
+export interface RepoInsightsData {
   metaData: {
     data: RepoMetaData | null;
     error: number | null;
@@ -46,7 +46,11 @@ interface RepoInsightsData {
     error: number | null;
   };
   contributors: {
-    data: Contributor[] | null;
+    /* `list` is one page of contributors (GitHub's default 30); `total` is the
+       real count, read from the Link header of a separate per_page=1 request.
+       They are deliberately different numbers — the panel shows the first few,
+       the tile reports how many there are. */
+    data: { list: Contributor[]; total: number } | null;
     error: number | null;
   };
   commitActivity: {
@@ -65,36 +69,41 @@ interface RepoInsightsData {
 
 const useFetchDashboard = (repoParam: string) => {
   const [data, setData] = useState<RepoInsightsData | null>(null);
-  const [error, setError] = useState<{ message: string } | null>(null);
-  const [fetching, setFetching] = useState(true);
+  /* status is carried alongside the message so the error screen can name
+     what went wrong. Its absence is meaningful: it means the fetch itself
+     threw, so no response ever came back. */
+  const [error, setError] = useState<{
+    message: string;
+    status?: number;
+  } | null>(null);
   useEffect(() => {
-    const getData = async () => {
-      setFetching(true);
+    const getData = async (attempt = 0) => {
       try {
         const res = await fetch(`/api/repo-insights?repo=${repoParam}`);
 
-        const body = await res.json();
-        if (!res.ok) {
-          setError({ message: body.error });
+        const body: { data: RepoInsightsData; error?: string } =
+          await res.json();
+
+        if (!res.ok && body.error) {
+          setError({ message: body.error, status: res.status });
         } else {
           setData(body.data);
+
+          if (body.data.commitActivity.error === 202 && attempt < 3) {
+            setTimeout(() => getData(attempt + 1), 3000);
+          }
         }
       } catch (err) {
         setError({ message: err instanceof Error ? err.message : String(err) });
-      } finally {
-        setFetching(false);
       }
     };
 
-    if (repoParam) {
-      getData();
-    }
+    getData();
   }, [repoParam]);
 
   return {
     data,
     error,
-    fetching,
   };
 };
 

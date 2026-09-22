@@ -268,3 +268,112 @@
   display: flex;
   flex-direction: column;
 }
+
+/* ---- dashboard error screen ---- */
+
+/* One short message, so the panel is capped and centred rather than running
+   the full page width the way the data grid does. */
+.errorWrap {
+  max-width: 560px;
+  margin-inline: auto;
+  padding-block: 64px;
+}
+
+/* Headings are reset to inherit further up the cascade, which is why .wrap h1
+   sets its own size too. Matches that treatment. */
+.errorHeading {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+/* The route's own sentence, and the only thing on screen that says what
+   actually went wrong — so it takes foreground colour and a looser line
+   height than helper text, since it often runs to two lines. */
+.errorMessage {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--foreground);
+  max-width: 48ch;
+}
+
+/* The analyze button's arrow, mirrored. There the shaft draws out leftward
+   from a right-pointing head; this one points back, so it grows rightward
+   from its head and the whole arrow nudges left. */
+.errorBack .shaft {
+  transform: scaleX(0);
+  transform-box: fill-box;
+  transform-origin: left center;
+  transition: transform 180ms ease;
+}
+
+.errorBack:hover .shaft,
+.errorBack:focus-visible .shaft {
+  transform: scaleX(1);
+}
+
+.errorBack .arrow {
+  transition: transform 180ms ease;
+}
+
+.errorBack:hover .arrow,
+.errorBack:focus-visible .arrow {
+  transform: translateX(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .errorBack .shaft,
+  .errorBack .arrow {
+    transition: none;
+  }
+}
+
+/* ---- panel states ---- */
+
+/* A failed section gets a warm box, not another line of muted text. Empty and
+   broken previously looked identical and were told apart only by their words;
+   this puts the difference in the form. */
+.alert {
+  margin: 0;
+  padding: 14px;
+  border-radius: 5px;
+  background: var(--warn-background);
+  border: 1px solid var(--warn-border);
+  color: var(--warn-text);
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* currentColor, so the icon follows --warn-text rather than pinning the hex */
+.alertIcon {
+  flex: none;
+  margin-top: 1px;
+}
+
+/* Empty is not a problem, so it stays quiet — no box, no colour. Title in
+   foreground over a muted explanation, centred in the space the data would
+   have filled so the panel keeps its height. */
+.empty {
+  display: grid;
+  gap: 6px;
+  align-content: center;
+  min-height: 120px;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 13px;
+}
+
+.emptyDetail {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
