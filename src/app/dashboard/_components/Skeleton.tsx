@@ -1,4 +1,4 @@
-import styles from "../dashboard.module.css";
+import styles from "@/app/dashboard/dashboard.module.css";
 
 const classNames = {
   bar: styles.skeletonBar,

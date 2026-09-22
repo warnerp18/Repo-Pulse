@@ -1,5 +1,5 @@
-import { Contributor } from "../../_hooks/useFetchDashboard";
-import styles from "./topContributors.module.css";
+import { Contributor } from "@/app/dashboard/_hooks/useFetchDashboard";
+import styles from "./top-contributors.module.css";
 import Image from "next/image";
 
 const TopContributors = ({ contributors }: { contributors: Contributor[] }) => {

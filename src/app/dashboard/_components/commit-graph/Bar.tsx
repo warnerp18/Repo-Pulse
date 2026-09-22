@@ -1,5 +1,5 @@
-import { ChartWeek, formatWeek } from "../../helpers";
-import styles from "./commitGraph.module.css";
+import { ChartWeek, formatWeek } from "@/app/dashboard/helpers";
+import styles from "./commit-graph.module.css";
 
 const Bar = ({
   height,

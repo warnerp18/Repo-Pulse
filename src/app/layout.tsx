@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import GradientDefs from "./_components/GradientDefs";
 import "./globals.css";
-import Nav from "./_components/Nav/Nav";
+import Nav from "./_components/nav/Nav";
 import styles from "./layout.module.css";
 
 const geistSans = Geist({

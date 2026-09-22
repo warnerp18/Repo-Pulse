@@ -1,7 +1,7 @@
-import { ChartWeek, formatWeek, getMonthLabels } from "../../helpers";
+import { ChartWeek, formatWeek, getMonthLabels } from "@/app/dashboard/helpers";
 import Bar from "./Bar";
-import Swatch from "../Swatch/Swatch";
-import styles from "./commitGraph.module.css";
+import Swatch from "@/app/dashboard/_components/swatch/Swatch";
+import styles from "./commit-graph.module.css";
 
 interface CommitGraphProps {
   weeks: ChartWeek[];

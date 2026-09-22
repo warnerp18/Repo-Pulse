@@ -1,5 +1,5 @@
-import type { ChangedFile } from "../../_hooks/useFetchDashboard";
-import styles from "./churnHotspots.module.css";
+import type { ChangedFile } from "@/app/dashboard/_hooks/useFetchDashboard";
+import styles from "./churn-hotspots.module.css";
 
 /** `packages/react/src/ReactHooks.js` -> `packages/react/src/` +
  *  `ReactHooks.js`; a root-level file gets an empty directory. The halves

@@ -1,5 +1,5 @@
-import Swatch, { LANGUAGE_SWATCHES, LANGUAGE_COLORS } from "../Swatch/Swatch";
-import styles from "./topFiveLanguages.module.css";
+import Swatch, { LANGUAGE_SWATCHES, LANGUAGE_COLORS } from "@/app/dashboard/_components/swatch/Swatch";
+import styles from "./top-five-languages.module.css";
 
 const TopFiveLanguages = ({
   languages,

@@ -1,5 +1,5 @@
-import RepoForm from "./_components/RepoForm/RepoForm";
-import Sky from "./_components/Sky/Sky";
+import RepoForm from "./_components/repo-form/RepoForm";
+import Sky from "./_components/sky/Sky";
 import styles from "./home.module.css";
 
 const Home = () => {

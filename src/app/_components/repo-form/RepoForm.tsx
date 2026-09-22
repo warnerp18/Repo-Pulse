@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import styles from "./repoForm.module.css";
+import styles from "./repo-form.module.css";
 import { parseRepo } from "@/lib/parseRepo";
 import { useRouter } from "next/navigation";
 

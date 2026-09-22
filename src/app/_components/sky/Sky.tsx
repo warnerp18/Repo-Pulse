@@ -1,4 +1,4 @@
-import styles from "./Sky.module.css";
+import styles from "./sky.module.css";
 
 const stars = [
   { x: "8%", y: "4%", dur: "9s", delay: "0.5s", len: "150px", id: 1 },
