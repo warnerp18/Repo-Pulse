@@ -1,0 +1,29 @@
+/* The brand dot: a gradient bead used as a status marker beside a line of
+   text. Decorative — whatever it sits next to says what the state is. */
+.dot {
+  /* width and height are ignored on a non-replaced inline element, so the
+     bead has to be blockified — it is not always inside a flex row. */
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gradient);
+}
+
+/* for an in-progress state; steady otherwise */
+.pulse {
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+}

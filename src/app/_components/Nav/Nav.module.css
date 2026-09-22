@@ -4,11 +4,10 @@
    One scoped class does the binding; bare selectors below ride along as
    descendants of it. A module drops any selector with no local class. */
 .header {
-  display: flex;
+  composes: row-between from global;
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
-  justify-content: space-between;
 }
 
 .brand {

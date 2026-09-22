@@ -1,0 +1,17 @@
+/* A small colour key: the square that sits beside a label in a legend or a
+   breakdown row. Purely decorative — the label next to it carries the
+   meaning, so it is hidden from assistive tech. */
+.swatch {
+  display: inline-block;
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+/* open variant, for a state that is pending rather than filled — the colour
+   arrives inline as border-color */
+.outline {
+  background-color: transparent;
+  border: 1px dashed;
+}

@@ -1,0 +1,71 @@
+.contributor {
+  /* position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--skeleton); */
+
+  gap: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.contributorUserRow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+/* flex: none stops a long handle beside it from squeezing the 28px avatar */
+.avatar {
+  flex: none;
+  border-radius: 50%;
+}
+
+/* the name/count row and the bar beneath it, filling the space the avatar
+   leaves. min-width: 0 lets a long login ellipsis instead of forcing the
+   row wider than the panel — a flex item will not shrink below its content
+   without it. */
+.contributorBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.contributorInfo {
+  composes: row-between from global;
+  width: 100%;
+}
+
+/* the handle is data, so it wears the dashboard's mono caption like the
+   month axis and the tooltip do. The ellipsis trio is what makes the
+   min-width: 0 above pay off — without it a long login just overflows. */
+.login {
+  composes: mono from global;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* mono / 12px / muted; flex: none so the number never gets squeezed by a
+   long handle beside it */
+.count {
+  composes: meta from global;
+  flex: none;
+}
+
+.track {
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--skeleton);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--gradient-mid);
+  border-radius: 2px;
+}

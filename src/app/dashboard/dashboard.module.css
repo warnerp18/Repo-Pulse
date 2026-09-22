@@ -5,6 +5,30 @@
   line-height: 1.5;
 }
 
+/* The three panel rows. .wrap's gap only spaces this section as a whole from
+   the header above it — without a gap of its own the rows sit flush, since
+   the preflight reset strips block margins. 20px between rows, against the
+   12px inside each one, so a row reads as a group. */
+.panels {
+  display: grid;
+  gap: 20px;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gradient-mid);
+  text-decoration: none;
+}
+
+.back:hover,
+.back:focus-visible {
+  color: var(--gradient-end);
+}
 /* ---- page header ---- */
 
 .wrap header {
@@ -35,20 +59,6 @@
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--muted);
-}
-
-.loadingDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--gradient);
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  50% {
-    opacity: 0.35;
-  }
 }
 
 /* ---- section grids ---- */
@@ -143,11 +153,22 @@
   gap: 10px;
 }
 
+/* The loaded chart is taller than its bars alone: 168px graph + 27px month
+   axis + 20px legend + 17px "View as table", plus the panel's three 16px
+   gaps between them. Reserving that here keeps the panel — and everything
+   below it on the page — from jumping when the data arrives. */
+.chartSkeleton {
+  min-height: 280px;
+}
+
+/* matches .graph in commitGraph.module.css, headroom included, so the
+   placeholder bars sit at the same scale as the real ones */
 .skeletonBars {
   display: flex;
   align-items: flex-end;
   gap: 3px;
-  height: 160px;
+  height: 168px;
+  padding-top: 34px;
 }
 
 .skeletonBar {
@@ -237,9 +258,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .skeleton::after {
-    animation: none;
-  }
-  .loadingDot {
     animation: none;
   }
 }

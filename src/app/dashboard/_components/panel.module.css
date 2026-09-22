@@ -6,3 +6,7 @@
   text-transform: uppercase;
   color: var(--muted);
 }
+
+.textContianer {
+  composes: row-between from global;
+}

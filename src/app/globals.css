@@ -30,6 +30,37 @@
   --warn-background: #211712;
   --warn-border: #7c3f12;
   --warn-text: #fdba74;
+
+  /* Commit-activity bars. The split is the 90-day window: the weeks the
+     Commits tile counts are --chart-in, everything older is --chart-out.
+     Both clear 3:1 against --background (7.56:1 and 3.03:1), and they stay
+     29.3 apart in OKLab under simulated deuteranopia, so the boundary
+     survives for red-green colourblind readers. Re-check both if either
+     value moves. */
+  --chart-in: #ff8a7a;
+  --chart-out: #287077;
+
+  /* Languages breakdown. A re-stepped GitHub Universe palette, validated on
+     this ground: all five clear 3:1 contrast, and the closest adjacent pair
+     (--lang-5 to --lang-4) stays 10.3 apart in OKLab under simulated
+     deuteranopia. Assigned by rank — slot 1 to the largest language — and
+     never reordered, since the stepping is what keeps touching segments
+     of the stacked bar distinguishable. */
+  --lang-1: #9b5fc4;
+  --lang-2: #ce7a32;
+  --lang-3: #4b79d4;
+  --lang-4: #e2527c;
+  --lang-5: #1297aa;
+
+  /* Churn hotspots: additions and deletions. The text steps are lighter for
+     legibility at 12px; the fills are the denser steps used in the bars.
+     NOTE these two are ~2.2 apart under deuteranopia — indistinguishable to
+     a red-green colourblind reader — so they must never appear without the
+     +/- figures beside them. */
+  --add: #56d364;
+  --del: #f8817b;
+  --add-fill: #2ea043;
+  --del-fill: #cf484a;
 }
 
 @theme inline {
@@ -45,6 +76,17 @@
   --color-warn-background: var(--warn-background);
   --color-warn-border: var(--warn-border);
   --color-warn-text: var(--warn-text);
+  --color-chart-in: var(--chart-in);
+  --color-chart-out: var(--chart-out);
+  --color-lang-1: var(--lang-1);
+  --color-lang-2: var(--lang-2);
+  --color-lang-3: var(--lang-3);
+  --color-lang-4: var(--lang-4);
+  --color-lang-5: var(--lang-5);
+  --color-add: var(--add);
+  --color-del: var(--del);
+  --color-add-fill: var(--add-fill);
+  --color-del-fill: var(--del-fill);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -87,4 +129,75 @@ body {
   -webkit-background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
+}
+
+/* ---- layout primitives ---- */
+
+/* Two things pushed to opposite ends of a row: a heading and its meta, a
+   handle and its count, a brand and its nav. Only the two declarations that
+   are always the same — alignment, gap and wrapping differ every time, so
+   they stay with the caller. */
+.row-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ---- typography primitives ----
+   Recipes that were repeating across the page and component styles.
+   Use directly from JSX (className="meta") or pull into a CSS Module with
+   `composes: meta from global;` — modules can compose global classes, so a
+   local rule only has to carry what actually differs.
+   Sizes are fixed here on purpose: these are the sizes the design uses.
+   Colour comes from --muted, so a token change moves all of them together. */
+
+/* mono caption — panel sub-labels, the fetch status line, inline counts */
+.meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* the same caption one step down, for text inside a figure: chart axes,
+   tick labels. Small enough that it recedes behind the marks it labels. */
+.meta-small {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* mono at the caller's own size — the family alone, for the cases that set
+   their own scale (the repo input at 16px, chips at 13px) */
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* uppercase section label — panel headings */
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* the hero's louder eyebrow: same idea as .label, but tracking loosens as
+   the size grows, so it is its own step rather than a modifier */
+.eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* secondary prose — form hints, helper text beside a control */
+.hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* body copy that sits under a heading, one step up from .hint */
+.body-muted {
+  font-size: 14px;
+  color: var(--muted);
 }

@@ -1,0 +1,53 @@
+/* one row per language, same rhythm as the contributors list */
+.list {
+  display: grid;
+  gap: 11px;
+}
+
+.row {
+  align-items: center;
+}
+
+/* keeps the swatch and the name together as one group, so only the
+   percentage is pushed to the far edge by .row-between */
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.name {
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* mono / 12px / muted, matching the counts in Top contributors */
+.percent {
+  composes: meta from global;
+  flex: none;
+}
+
+/* The rounded ends live on the container, not the end segments: with a
+   remainder that can be a fraction of a percent, :last-child is often a 1px
+   sliver and the curve lands somewhere invisible. overflow: hidden clips
+   whatever sits at each end to the bar's own shape instead. 4px is half the
+   height, so the ends are fully round. */
+.languageBar {
+  display: flex;
+  gap: 2px;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.languageBar span {
+  display: inline-block;
+}
+
+/* whatever the top five leave over, so the bar always reads as a whole */
+.remainder {
+  background-color: var(--skeleton);
+}

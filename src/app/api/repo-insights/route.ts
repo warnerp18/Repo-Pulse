@@ -80,7 +80,6 @@ async function getChurn(repo: string, since: string) {
     total_commits: number;
     files: GitHubComparisonFile[];
   };
-
   const filteredCompare = {
     totalCommits: compare.total_commits,
     files: compare.files.map((file) => {
@@ -97,6 +96,27 @@ async function getChurn(repo: string, since: string) {
   return compareRes.ok
     ? { data: filteredCompare, error: null }
     : { data: null, error: compareRes.status };
+}
+
+async function getRepoMeta(repo: string) {
+  const res = await fetchGitHub(`https://api.github.com/repos/${repo}`);
+
+  if (!res.ok) {
+    return { data: null, error: res.status };
+  }
+  const data = await res.json();
+
+  return {
+    data: {
+      pushedAt: data.pushed_at,
+      description: data.description,
+      defaultBranch: data.default_branch,
+      stargazersCount: data.stargazers_count,
+      forksCount: data.forks_count,
+      openIssuesCount: data.open_issues_count,
+    },
+    error: null,
+  };
 }
 
 export async function GET(request: NextRequest) {
@@ -132,14 +152,27 @@ export async function GET(request: NextRequest) {
 
   let data;
   try {
-    const [languages, contributors, commitActivity, churn] = await Promise.all([
-      getLanguages(repo),
-      getContributors(repo),
-      getCommitActivity(repo),
-      getChurn(repo, ninetyDaysAgo),
-    ]);
+    const [metaData, languages, contributors, commitActivity, churn] =
+      await Promise.all([
+        getRepoMeta(repo),
+        getLanguages(repo),
+        getContributors(repo),
+        getCommitActivity(repo),
+        getChurn(repo, ninetyDaysAgo),
+      ]);
 
-    data = { languages, contributors, commitActivity, churn };
+    if (metaData.error === 404) {
+      return Response.json(
+        {
+          error: `Couldn't find "${repo}" on GitHub. Check the spelling — private repos aren't available.`,
+        },
+        {
+          status: 404,
+        },
+      );
+    }
+
+    data = { languages, contributors, commitActivity, churn, metaData };
   } catch (err) {
     return Response.json(
       {

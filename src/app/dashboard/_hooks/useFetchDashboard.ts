@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-interface Contributor {
+export interface Contributor {
   login: string;
   id: number;
   avatar_url: string;
@@ -24,7 +24,22 @@ interface ChangedFile {
   blob_url: string;
 }
 
+/** Shaped by getRepoMeta in the route — camelCase, not GitHub's raw keys. */
+export interface RepoMetaData {
+  /** ISO 8601. Last push to any branch, not only the default one. */
+  pushedAt: string;
+  description: string | null;
+  defaultBranch: string;
+  stargazersCount: number;
+  forksCount: number;
+  openIssuesCount: number;
+}
+
 interface RepoInsightsData {
+  metaData: {
+    data: RepoMetaData | null;
+    error: number | null;
+  };
   languages: {
     data: Record<string, number> | null;
     error: number | null;

@@ -1,0 +1,161 @@
+.bar {
+  background-color: var(--chart-out);
+  flex: 1;
+  height: 60%;
+  border-radius: 2px 2px 0 0;
+  transition: background-color 120ms ease;
+  position: relative;
+}
+
+.coral {
+  background-color: var(--chart-in);
+}
+
+/* The partial week is an open slot, so it has to beat every fill above it:
+   it is also an in-window bar, so .coral would otherwise paint it. Two
+   classes outrank one, whatever order the rules end up in. */
+.bar.dotted {
+  background-color: transparent;
+  border: 1px dashed var(--chart-in);
+}
+
+.bar:hover {
+  background-color: var(--foreground);
+}
+
+.bar.dotted:hover {
+  background-color: transparent;
+  border-color: var(--foreground);
+}
+
+.graph {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 168px;
+  /* Added for edge case where graph bar is 100%. There will be no room for the tool tip **/
+  padding-top: 34px;
+}
+
+/* The column count comes from the data, set inline in CommitGraph. The 3px
+   gap must stay in step with .graph's, or the labels drift off their bars. */
+.monthContainer {
+  display: grid;
+  gap: 3px;
+  border-top: 1px solid var(--skeleton);
+  padding-top: 10px;
+}
+
+/* labels are wider than one column, so they run rightwards from their bar */
+.monthContainer p {
+  white-space: nowrap;
+}
+
+/* except the last, which would run past the panel edge */
+.monthContainer p:last-child {
+  justify-self: end;
+}
+
+/* keep tooltip for last 2 bars aligned to the left of the bar so it doesn't overflow */
+.bar:last-child .tip,
+.bar:nth-last-child(2) .tip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+/* keep tooltip for first 3 bars aligned to the right of the bar so it doesn't overflow */
+.bar:nth-child(-n + 3) .tip {
+  right: auto;
+  left: 0;
+  transform: none;
+}
+
+.tip {
+  /* mono / 11px / muted — the same caption recipe the month axis uses */
+  composes: meta-small from global;
+  line-height: 1.4;
+  padding: 6px 8px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 100%; /* sit above the bar's top edge */
+  margin-bottom: 6px;
+  z-index: 1; /* above neighbouring bars */
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 100ms ease;
+  background-color: var(--background);
+  border: 1px solid var(--skeleton-highlight);
+  border-radius: 5px;
+}
+
+/* Hover only: the bars are divs with no tabindex, so :focus-visible could
+   never match them. Keyboard and screen-reader users get this data from the
+   "View as table" panel below instead of 52 tab stops. */
+.bar:hover .tip {
+  opacity: 1;
+}
+
+/* ---- table fallback ---- */
+
+.tableToggle summary {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.tableScroll {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--foreground);
+  padding-bottom: 6px;
+}
+
+.table td {
+  padding: 2px 8px 2px 0;
+}
+
+/* the value line reads first, so it gets the brighter ink */
+/* the count reads first, so it takes the brighter ink; the week line below
+   stays muted, inherited from .tip */
+.tipValue {
+  display: block;
+  color: var(--foreground);
+}
+
+/* a zero-commit partial week still has to be visible as a slot */
+.dotted {
+  min-height: 16px;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* each key pairs a swatch with its label */
+.legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
