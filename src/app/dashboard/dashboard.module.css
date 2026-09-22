@@ -161,7 +161,7 @@
   min-height: 280px;
 }
 
-/* matches .graph in commitGraph.module.css, headroom included, so the
+/* matches .graph in commit-graph.module.css, headroom included, so the
    placeholder bars sit at the same scale as the real ones */
 .skeletonBars {
   display: flex;
@@ -260,4 +260,11 @@
   .skeleton::after {
     animation: none;
   }
+}
+
+.errorButtonContainer {
+  align-items: baseline;
+  gap: 16px;
+  display: flex;
+  flex-direction: column;
 }
