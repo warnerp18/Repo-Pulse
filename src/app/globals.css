@@ -379,6 +379,14 @@ body {
   }
 }
 
+/* In-page anchors glide rather than jump. Scoped to no-preference so it is
+   off unless the browser actively says motion is fine. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 /* An infinite animation is exactly what this setting is for. The gradient
    border stays — only the motion stops — so the button keeps its identity. */
 @media (prefers-reduced-motion: reduce) {
