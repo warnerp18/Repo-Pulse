@@ -13,7 +13,6 @@ import {
   getCommitTotals,
   getTopLanguage,
   panelState,
-  type PanelState,
 } from "@/app/dashboard/helpers";
 import CommitGraph from "@/app/dashboard/_components/commit-graph/CommitGraph";
 import TopContributors from "@/app/dashboard/_components/top-contributors/TopContributors";
@@ -39,17 +38,10 @@ const DashBoard = () => {
      open "Error handling" item in HANDOFF.md. */
   if (!data) return <DashboardSkeleton />;
 
-  /* TEMPORARY — preview switch, delete before deploying.
-     ?state=failed | empty | unavailable | pending forces every panel into that
-     state so the treatments can be seen without waiting for a real failure. */
-  const forced = searchParams.get("state") as PanelState | null;
-
-  const contributorsState =
-    forced ?? panelState("contributors", data.contributors.error);
-  const languagesState = forced ?? panelState("languages", data.languages.error);
-  const churnState = forced ?? panelState("churn", data.churn.error);
-  const commitState =
-    forced ?? panelState("commitActivity", data.commitActivity.error);
+  const contributorsState = panelState("contributors", data.contributors.error);
+  const languagesState = panelState("languages", data.languages.error);
+  const churnState = panelState("churn", data.churn.error);
+  const commitState = panelState("commitActivity", data.commitActivity.error);
   const commitData = data.commitActivity.data;
   const contributors = data.contributors?.data;
   const languages = data.languages.data;
