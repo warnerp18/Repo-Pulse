@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- The brand mark: the Dot bead with its pulse halo. Kept fill-only and
+       stroke-free on purpose: a 2px stroke is a 1px hairline at 16px, and a
+       gradient across a hairline is invisible. Both circles carry the same
+       gradient so the halo reads as the bead's own colour at any size.
+       The stops are literal hexes, not the gradient custom properties, because
+       an icon file is its own document: it cannot see globals.css or
+       GradientDefs. Keep them in step with the tokens in globals.css by hand.
+       Nav.tsx draws this same mark against the shared url(#g) gradient, so the
+       two files have to change together.
+       Note for editors: no double hyphen may appear inside this comment, XML
+       forbids it, and a malformed icon silently falls back to a blank tab. -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c79bf2" />
+      <stop offset="0.55" stop-color="#f27aa5" />
+      <stop offset="1" stop-color="#f28b60" />
+    </linearGradient>
+  </defs>
+  <circle cx="16" cy="16" r="14" fill="url(#g)" opacity="0.28" />
+  <circle cx="16" cy="16" r="7" fill="url(#g)" />
+</svg>

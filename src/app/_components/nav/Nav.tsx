@@ -5,18 +5,13 @@ const Nav = () => {
   return (
     <header className={styles.header}>
       <Link href="/" className={styles.brand}>
-        <svg
-          width="26"
-          height="26"
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden="true">
-          <path
-            d="M12 2 3 7v10l9 5 9-5V7l-9-5Z"
-            stroke="url(#g)"
-            strokeWidth="2"
-            strokeLinejoin="round"
-          />
+        {/* The brand mark: the Dot bead with its pulse halo. src/app/icon.svg
+            is the same two circles, and the two have to be changed together —
+            an icon file is its own document, so it cannot reach url(#g) and
+            carries its own copy of the stops. */}
+        <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" fill="url(#g)" opacity="0.28" />
+          <circle cx="16" cy="16" r="7" fill="url(#g)" />
         </svg>
         Repo Pulse
       </Link>
