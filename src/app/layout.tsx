@@ -4,6 +4,7 @@ import GradientDefs from "./_components/GradientDefs";
 import "./globals.css";
 import Nav from "./_components/nav/Nav";
 import styles from "./layout.module.css";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Nav />
           {children}
         </div>
+        <Analytics />
       </body>
     </html>
   );
