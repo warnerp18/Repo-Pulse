@@ -25,7 +25,12 @@ const PanelAlert = ({ children }: { children: ReactNode }) => (
         strokeWidth="2"
         strokeLinejoin="round"
       />
-      <path d="M12 9v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path
+        d="M12 9v4"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
       <circle cx="12" cy="16.5" r="1.2" fill="currentColor" />
     </svg>
     <span>{children}</span>

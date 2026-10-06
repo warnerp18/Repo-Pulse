@@ -255,10 +255,7 @@ describe("formatTimeAgo", () => {
     // and render "0 months ago", which is how the last two bugs surfaced.
     for (const days of [1, 23, 24, 25, 29, 30, 31, 59, 60, 364, 365, 800]) {
       const result = formatTimeAgo(ago(days * DAY_MS));
-      assert.ok(
-        !result?.startsWith("0 "),
-        `${days} days produced "${result}"`,
-      );
+      assert.ok(!result?.startsWith("0 "), `${days} days produced "${result}"`);
     }
   });
 

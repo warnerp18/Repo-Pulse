@@ -60,8 +60,7 @@ const ChurnHotspots = ({ files }: { files: ChangedFile[] }) => {
                   href={file.blobUrl}
                   title={file.fileName}
                   target="_blank"
-                  rel="noreferrer"
-                >
+                  rel="noreferrer">
                   <span className={styles.directory}>{directory}</span>
                   <span className={styles.base}>{base}</span>
                 </a>

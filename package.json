@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "test": "node --test --disable-warning=MODULE_TYPELESS_PACKAGE_JSON 'src/**/*.test.ts'",
-    "test:watch": "node --test --watch --disable-warning=MODULE_TYPELESS_PACKAGE_JSON 'src/**/*.test.ts'"
+    "test:watch": "node --test --watch --disable-warning=MODULE_TYPELESS_PACKAGE_JSON 'src/**/*.test.ts'",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
@@ -18,11 +20,14 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
+    "jest": "^30.5.2",
+    "prettier": "^3.9.9",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

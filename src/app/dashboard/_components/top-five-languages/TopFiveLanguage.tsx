@@ -1,4 +1,7 @@
-import Swatch, { LANGUAGE_SWATCHES, LANGUAGE_COLORS } from "@/app/dashboard/_components/swatch/Swatch";
+import Swatch, {
+  LANGUAGE_SWATCHES,
+  LANGUAGE_COLORS,
+} from "@/app/dashboard/_components/swatch/Swatch";
 import styles from "./top-five-languages.module.css";
 
 const TopFiveLanguages = ({
@@ -26,8 +29,7 @@ const TopFiveLanguages = ({
               style={{
                 width: percentage,
                 backgroundColor: LANGUAGE_COLORS[i],
-              }}
-            ></span>
+              }}></span>
           );
         })}
         {remainder > 0 ? (
