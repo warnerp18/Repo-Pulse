@@ -53,11 +53,11 @@ const HowItWorks = () => {
             <div className={styles.sectionRule} />
             <p>
               Everything comes from GitHub&apos;s public API. One request to
-              this app fans out into five requests to GitHub, in parallel, and
-              returns as a single response. Recent answers are reused for a
-              short while so the same repository isn&apos;t re-fetched on every
-              visit. Nothing about you is stored, and nothing is kept beyond
-              that.
+              this app fans out to GitHub for five sections of data, in
+              parallel, and returns as a single response. Recent answers are
+              reused for a short while so the same repository isn&apos;t
+              re-fetched on every visit. Nothing about you is stored, and
+              nothing is kept beyond that.
             </p>
             <dl className={styles.sources}>
               <div className={styles.source}>
@@ -186,9 +186,9 @@ const HowItWorks = () => {
                 <h3>A backend-for-frontend</h3>
                 <p className="muted">
                   The browser makes one request to this app&apos;s own API,
-                  which aggregates the five GitHub calls and returns only the
-                  fields the screen uses. GitHub&apos;s raw responses are
-                  enormous (full commit objects with signatures and diff
+                  which aggregates the five sections from GitHub and returns
+                  only the fields the screen uses. GitHub&apos;s raw responses
+                  are enormous (full commit objects with signatures and diff
                   patches), and shipping them to the browser to discard 95%
                   would be the easy, wrong choice.
                 </p>
@@ -329,13 +329,13 @@ const HowItWorks = () => {
               <div className={styles.note}>
                 <h3>Fan out first, ask questions later</h3>
                 <p className="muted">
-                  All five GitHub requests fire in parallel, and only then does
-                  the app check whether the repository exists. Checking first
-                  would save four requests when someone mistypes a name, but it
-                  would add a round trip to every successful load, to guard
-                  against the rarer case. Requests that wait on each other are
-                  the most common cause of a slow page, and a wasted request
-                  costs less than a slow one.
+                  All five sections are requested from GitHub in parallel, and
+                  only then does the app check whether the repository exists.
+                  Checking first would save five requests when someone mistypes
+                  a name, but it would add a round trip to every successful
+                  load, to guard against the rarer case. Requests that wait on
+                  each other are the most common cause of a slow page, and a
+                  wasted request costs less than a slow one.
                 </p>
                 <p className={styles.verdict}>
                   <span className={styles.chose}>parallel fan-out</span>
@@ -442,11 +442,12 @@ const HowItWorks = () => {
                   machines, and anything one of them holds in memory is
                   invisible to the other. An in-memory cache would look correct
                   in development and quietly do nothing in production. Caching
-                  the requests instead means every instance shares the same
-                  copy, and each GitHub endpoint can carry its own lifetime:
-                  commit statistics are a weekly rollup and can sit still for an
-                  hour, while &ldquo;last push&rdquo; is the one number a reader
-                  would notice going stale, so it refreshes far sooner.
+                  the requests instead puts them in Next.js&apos;s data cache
+                  rather than one machine&apos;s memory, and lets each GitHub
+                  endpoint carry its own lifetime: commit statistics are a
+                  weekly rollup and can sit still for an hour, while &ldquo;last
+                  push&rdquo; is the one number a reader would notice going
+                  stale, so it refreshes far sooner.
                 </p>
                 <p className={styles.verdict}>
                   <span className={styles.chose}>request-layer cache</span>
@@ -457,15 +458,15 @@ const HowItWorks = () => {
               <div className={styles.note}>
                 <h3>REST, not GraphQL</h3>
                 <p className="muted">
-                  GitHub offers both, and GraphQL would let the five requests
+                  GitHub offers both, and GraphQL would let these requests
                   become one. For a project this size the setup (a client, a
                   schema, generated types, a caching layer) costs more than it
-                  saves against five well-understood REST endpoints that fan out
-                  in parallel anyway. The app&apos;s own API is REST for the
-                  same reason: one route handler, one shape, no build step.
+                  saves against a handful of well-understood REST endpoints that
+                  fan out in parallel anyway. The app&apos;s own API is REST for
+                  the same reason: one route handler, one shape, no build step.
                 </p>
                 <p className={styles.verdict}>
-                  <span className={styles.chose}>five REST calls</span>
+                  <span className={styles.chose}>parallel REST calls</span>
                   <span className={styles.sep}>over</span>
                   <span className={styles.over}>one GraphQL query</span>
                 </p>
